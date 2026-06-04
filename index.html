@@ -246,7 +246,6 @@
                 <label for="selectedDhikr">📿 اختر الذكر الذي تريد قراءته الآن:</label>
                 <select id="selectedDhikr" required onchange="toggleCustomDhikrField()">
                     <option value="" disabled selected>جاري جلب أذكار المعلمة بسنت المباركة... ⏳</option>
-                    <!-- الأذكار الأساسية تظهر احتياطياً وتلقائياً دائماً -->
                     <option value='"سبحان الله" "الحمد لله" "لا إله إلا الله" "الله أكبر" (تزرع شجرة جميلة في الجنة)'>"سبحان الله" "الحمد لله" "لا إله إلا الله" "الله أكبر" 🌳 (تزرع شجرة جميلة في الجنة)</option>
                     <option value='"سبحان الله وبحمده، سبحان الله العظيم" (تجعل ميزان الحسنات أثقل من السيئات)'>"سبحان الله وبحمده، سبحان الله العظيم" ⚖️ (تجعل ميزان الحسنات أثقل)</option>
                     <option value='"بِسْمِ اللَّهِ، تَوَكَّلْتُ عَلَى اللَّهِ، وَلَا حَوْلَ وَلَا قُوَّةَ إِلَّا بِاللَّهِ" (تحميك خارج المنزل وتعبد عنك الشيطان)'>"بِسْمِ اللَّهِ، تَوَكَّلْتُ عَلَى اللَّهِ.." 🏠 (الملائكة تحميك وتبعد الشيطان)</option>
@@ -275,8 +274,8 @@
             </div>
             <div class="podium" id="leaderboardPodium">
                 <div class="rank-card rank-other">
-                    <span>في انتظار تسجيل أول الأبطال اليوم...</span>
-                    <span class="badge">جيد في انتظاركم في المقدمة</span>
+                    <span>جاري تحميل لوحة الأبطال من الشيت... ⏳</span>
+                    <span class="badge">انتظر قليلاً</span>
                 </div>
             </div>
         </div>
@@ -284,20 +283,20 @@
 
     <script>
         let participants = [];
-        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzeG6csF-TfEsmFhbYshNAn394OTdRAVtjt4504pPR7eu_Zsa27dLdekvSnlLGW1C5o/exec';
+        // تم تحديث الرابط هنا بنجاح بالرابط الجديد الخاص بكِ
+        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwLgIOkfSEPaQq-_qgmuDRxQvAZCvvhriNNCUv4sBR7fd60WzsacOKbePHitmwgHpJ_/exec';
 
-        // قراءة الأذكار المضافة حديثاً في الشيت تلقائياً ودمجها بالقائمة
         window.addEventListener('DOMContentLoaded', () => {
             const selectElement = document.getElementById('selectedDhikr');
             
             fetch(GOOGLE_SCRIPT_URL)
             .then(response => response.json())
             .then(data => {
+                // أولاً: معالجة الأذكار المخصصة القادمة من الشيت (العمود E)
                 if(data.dhikrList && data.dhikrList.length > 0) {
                     const currentOptions = Array.from(selectElement.options);
                     selectElement.innerHTML = ''; 
                     
-                    // السطر الافتراضي المشرق
                     const defaultOpt = document.createElement('option');
                     defaultOpt.value = "";
                     defaultOpt.disabled = true;
@@ -305,7 +304,6 @@
                     defaultOpt.textContent = "اضغط هنا واشحن قلبك بذكر الله... ✨";
                     selectElement.appendChild(defaultOpt);
                     
-                    // إضافة أذكار المعلمة بسنت المكتوبة في الشيت بالترتيب في البداية
                     data.dhikrList.forEach(dhikr => {
                         if(dhikr && dhikr.trim() !== "") {
                             const opt = document.createElement('option');
@@ -315,14 +313,12 @@
                         }
                     });
                     
-                    // إعادة دمج الأذكار الأساسية الثابتة
                     currentOptions.forEach(opt => {
                         if(opt.value !== "" && opt.value !== "custom") {
                             selectElement.appendChild(opt);
                         }
                     });
                     
-                    // الحقل المخصص للكتابة الحرة دائماً في الآخر
                     const customOpt = document.createElement('option');
                     customOpt.value = "custom";
                     customOpt.textContent = "✍️ كتابة ذكر آخر غير موجود بالقائمة...";
@@ -330,12 +326,31 @@
                 } else {
                     selectElement.options[0].textContent = "اضغط هنا واشحن قلبك بذكر الله... ✨";
                 }
+
+                // ثانياً: جلب أسماء الأبطال من الشيت (العمود A) لمنع اختفائها عند التحديث
+                if (data.participants && data.participants.length > 0) {
+                    participants = data.participants;
+                    updateLeaderboard();
+                } else {
+                    showEmptyLeaderboard();
+                }
             })
             .catch(err => {
-                console.log("تم الاعتماد على الأذكار الافتراضية:", err);
+                console.log("حدث خطأ أثناء اتصال الموقع بالشيت:", err);
                 selectElement.options[0].textContent = "اضغط هنا واشحن قلبك بذكر الله... ✨";
+                showEmptyLeaderboard();
             });
         });
+
+        function showEmptyLeaderboard() {
+            const podium = document.getElementById('leaderboardPodium');
+            podium.innerHTML = `
+                <div class="rank-card rank-other">
+                    <span>في انتظار تسجيل أول الأبطال اليوم...</span>
+                    <span class="badge">جيد في انتظاركم في المقدمة</span>
+                </div>
+            `;
+        }
 
         function toggleCustomDhikrField() {
             const selectElement = document.getElementById('selectedDhikr');
