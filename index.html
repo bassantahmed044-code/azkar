@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>منصة ترتيلا التفاعلية للأذكار</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Aref+Ruqaa:wght@700&family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-pink: #ffb6c1;
+            --light-blue: #e0f7fa;
+            --pistachio: #e8f5e9;
+            --dark-text: #4a4a4a;
+            --gold: #ffd700;
+        }
+
+        body {
+            font-family: 'Cairo', sans-serif;
+            background: linear-gradient(135deg, var(--light-blue), #ffffff, var(--primary-pink));
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+            color: var(--dark-text);
+        }
+
+        .bg-watermark {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-15deg);
+            font-size: 13vw;
+            font-weight: 900;
+            color: rgba(186, 104, 200, 0.05);
+            white-space: nowrap;
+            pointer-events: none;
+            z-index: 0;
+            user-select: none;
+        }
+
+        .floating-emoji {
+            position: fixed;
+            font-size: 28px;
+            animation: floatAnimation 5s infinite ease-in-out;
+            z-index: 1;
+            pointer-events: none;
+            opacity: 0.85;
+        }
+
+        @keyframes floatAnimation {
+            0% { transform: translateY(0px) rotate(0deg) scale(1); }
+            50% { transform: translateY(-25px) rotate(15deg) scale(1.1); }
+            100% { transform: translateY(0px) rotate(0deg) scale(1); }
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 30px auto;
+            background: rgba(255, 255, 255, 0.88);
+            backdrop-filter: blur(10px);
+            border-radius: 30px;
+            padding: 35px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            text-align: center;
+            position: relative;
+            z-index: 2;
+            border: 4px solid var(--light-blue);
+        }
+
+        .teacher-signature {
+            font-family: 'Aref Ruqaa', serif;
+            font-size: 2.5rem;
+            color: #8e44ad;
+            margin-bottom: 5px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        }
+
+        .motivation-quote {
+            font-size: 1.3rem;
+            color: #2e7d32;
+            font-weight: bold;
+            background: var(--pistachio);
+            padding: 12px 25px;
+            border-radius: 50px;
+            display: inline-block;
+            margin-bottom: 30px;
+            border: 2px dashed #81c784;
+        }
+
+        .input-group {
+            margin-bottom: 22px;
+            text-align: right;
+            max-width: 550px;
+            margin-left: auto;
+            margin-right: auto;
+            transition: all 0.4s ease;
+        }
+
+        .hidden-group {
+            display: none;
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+
+        .show-group {
+            display: block;
+            opacity: 1;
+            transform: translateY(0px);
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: #5c5c5c;
+            font-size: 1.1rem;
+        }
+
+        input[type="text"], select {
+            width: 100%;
+            padding: 14px 20px;
+            border: 2px solid #ce93d8;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            box-sizing: border-box;
+            outline: none;
+            transition: all 0.3s;
+            text-align: center;
+            font-family: 'Cairo', sans-serif;
+            background-color: #ffffff;
+        }
+
+        input[type="text"]:focus, select:focus {
+            border-color: #8e44ad;
+            box-shadow: 0 0 10px rgba(142, 68, 173, 0.2);
+        }
+
+        .custom-dhikr-input {
+            border-color: #81c784 !important;
+            background-color: #f1f8e9 !important;
+        }
+        .custom-dhikr-input:focus {
+            border-color: #4caf50 !important;
+            box-shadow: 0 0 10px rgba(76, 175, 80, 0.2) !important;
+        }
+
+        .btn-submit {
+            background: linear-gradient(45deg, #ff8da1, #8e44ad);
+            color: white;
+            border: none;
+            padding: 14px 45px;
+            font-size: 1.3rem;
+            font-weight: bold;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(255, 141, 161, 0.4);
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin-top: 10px;
+        }
+
+        .btn-submit:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 20px rgba(255, 141, 161, 0.6);
+        }
+
+        .leaderboard {
+            margin-top: 45px;
+            background: white;
+            border-radius: 25px;
+            padding: 25px;
+            border: 3px solid var(--primary-pink);
+        }
+
+        .leaderboard-title {
+            font-size: 1.6rem;
+            color: #d81b60;
+            margin-bottom: 25px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .podium {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            max-width: 550px;
+            margin: 0 auto;
+        }
+
+        .rank-card {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px 25px;
+            border-radius: 50px;
+            font-weight: bold;
+            font-size: 1.15rem;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.02);
+            transition: all 0.3s;
+        }
+
+        .rank-1 { background-color: #fff9c4; border: 2px solid #fbc02d; color: #f57f17; } 
+        .rank-2 { background-color: #e1f5fe; border: 2px solid #03a9f4; color: #01579b; } 
+        .rank-3 { background-color: #e8f5e9; border: 2px solid #4caf50; color: #1b5e20; } 
+        .rank-other { background-color: #f5f5f5; border: 2px solid #bdbdbd; color: #757575; }
+
+        .badge {
+            background: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.95rem;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="bg-watermark">ترتيلا</div>
+
+    <div class="floating-emoji" style="top: 8%; right: 8%; animation-delay: 0s;">☀️</div>
+    <div class="floating-emoji" style="top: 12%; left: 12%; animation-delay: 1.2s;">💖</div>
+    <div class="floating-emoji" style="top: 45%; right: 4%; animation-delay: 2.5s;">⭐</div>
+    <div class="floating-emoji" style="top: 50%; left: 3%; animation-delay: 0.7s;">🌸</div>
+    <div class="floating-emoji" style="top: 78%; right: 12%; animation-delay: 3.8s;">🌸</div>
+    <div class="floating-emoji" style="top: 82%; left: 10%; animation-delay: 2s;">💖</div>
+    <div class="floating-emoji" style="top: 25%; right: 20%; animation-delay: 1.5s;">⭐</div>
+
+    <div class="container">
+        <div class="teacher-signature">تحت إشراف معلمتكم التي تحبكم بسنت أحمد</div>
+        
+        <div class="motivation-quote">✨ "أبطالي الصغار، بذكر الله تطمئن قلوبنا وتُنار أيامنا.. اختاروا ذكراً وقوموا بقراءته لتسجيل أسمائكم في لوحة الأبطال!" ✨</div>
+
+        <form id="dhikrForm">
+            <div class="input-group">
+                <label for="studentName">👦 اكتب اسمك يا بطل / يا بطلة هنا:</label>
+                <input type="text" id="studentName" required placeholder="اكتب اسمك الثلاثي المشرق...">
+            </div>
+
+            <div class="input-group">
+                <label for="selectedDhikr">📿 اختر الذكر الذي تريد قراءته الآن:</label>
+                <select id="selectedDhikr" required onchange="toggleCustomDhikrField()">
+                    <option value="" disabled selected>جاري جلب أذكار المعلمة بسنت المباركة... ⏳</option>
+                    <!-- الأذكار الأساسية تظهر احتياطياً وتلقائياً دائماً -->
+                    <option value='"سبحان الله" "الحمد لله" "لا إله إلا الله" "الله أكبر" (تزرع شجرة جميلة في الجنة)'>"سبحان الله" "الحمد لله" "لا إله إلا الله" "الله أكبر" 🌳 (تزرع شجرة جميلة في الجنة)</option>
+                    <option value='"سبحان الله وبحمده، سبحان الله العظيم" (تجعل ميزان الحسنات أثقل من السيئات)'>"سبحان الله وبحمده، سبحان الله العظيم" ⚖️ (تجعل ميزان الحسنات أثقل)</option>
+                    <option value='"بِسْمِ اللَّهِ، تَوَكَّلْتُ عَلَى اللَّهِ، وَلَا حَوْلَ وَلَا قُوَّةَ إِلَّا بِاللَّهِ" (تحميك خارج المنزل وتعبد عنك الشيطان)'>"بِسْمِ اللَّهِ، تَوَكَّلْتُ عَلَى اللَّهِ.." 🏠 (الملائكة تحميك وتبعد الشيطان)</option>
+                    <option value='"اللهم صلِّ وسلم على نبينا محمد" (تكسب بها مكانة قريبة من النبي في الجنة)'>"اللهم صلِّ وسلم على نبينا محمد" 💖 (تكسب مكانة قريبة من النبي في الجنة)</option>
+                    <option value='"لا حَوْلَ وَلا قُوَّةَ إِلَّا بِاللَّهِ" (كنز من كنوز الجنة)'>"لا حَوْلَ وَلا قُوَّةَ إِلَّا بِاللَّهِ" 💎 (كنز من كنوز الجنة)</option>
+                    <option value='"سُبْحَانَ اللهِ وَبِحَمْدِهِ" 100 مرة (تغفر ذنوبك)'>"سُبْحَانَ اللهِ وَبِحَمْدِهِ" 100 مرة ✨ (تغفر ذنوبك كلها)</option>
+                    <option value='"سُبْحَانَ اللهِ" 100 مرة (تكسب 1000 حسنة في اليوم)'>"سُبْحَانَ اللهِ" 100 مرة 📈 (تكسب 1000 حسنة في اليوم!)</option>
+                    <option value='سيد الاستغفار: "اللَّهُمَّ أَنْتَ رَبِّي لَا إِلَهَ إِلَّا أَنْتَ.." (من قالها ثم مات دخل الجنة)'>سيد الاستغفار: "اللَّهُمَّ أَنْتَ رَبِّي.." 👑 (من قالها دخل الجنة بإذن الله)</option>
+                    <option value="custom">✍️ كتابة ذكر آخر غير موجود بالقائمة...</option>
+                </select>
+            </div>
+
+            <div id="customDhikrGroup" class="input-group hidden-group">
+                <label for="customDhikr">✏️ اكتب الذكر الجديد المفضل لديك هنا:</label>
+                <input type="text" id="customDhikr" class="custom-dhikr-input" placeholder="اكتب ذكرك المبارك هنا...">
+            </div>
+
+            <button type="submit" class="btn-submit">💖 لقد قرأت الذكر! سجلوني في لوحة الأبطال 🚀</button>
+        </form>
+
+        <div class="leaderboard">
+            <div class="leaderboard-title">
+                <span>🏆</span>
+                <h2>لوحة أبطال ترتيلا التفاعلية</h2>
+                <span>🏆</span>
+            </div>
+            <div class="podium" id="leaderboardPodium">
+                <div class="rank-card rank-other">
+                    <span>في انتظار تسجيل أول الأبطال اليوم...</span>
+                    <span class="badge">جيد في انتظاركم في المقدمة</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let participants = [];
+        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzeG6csF-TfEsmFhbYshNAn394OTdRAVtjt4504pPR7eu_Zsa27dLdekvSnlLGW1C5o/exec';
+
+        // قراءة الأذكار المضافة حديثاً في الشيت تلقائياً ودمجها بالقائمة
+        window.addEventListener('DOMContentLoaded', () => {
+            const selectElement = document.getElementById('selectedDhikr');
+            
+            fetch(GOOGLE_SCRIPT_URL)
+            .then(response => response.json())
+            .then(data => {
+                if(data.dhikrList && data.dhikrList.length > 0) {
+                    const currentOptions = Array.from(selectElement.options);
+                    selectElement.innerHTML = ''; 
+                    
+                    // السطر الافتراضي المشرق
+                    const defaultOpt = document.createElement('option');
+                    defaultOpt.value = "";
+                    defaultOpt.disabled = true;
+                    defaultOpt.selected = true;
+                    defaultOpt.textContent = "اضغط هنا واشحن قلبك بذكر الله... ✨";
+                    selectElement.appendChild(defaultOpt);
+                    
+                    // إضافة أذكار المعلمة بسنت المكتوبة في الشيت بالترتيب في البداية
+                    data.dhikrList.forEach(dhikr => {
+                        if(dhikr && dhikr.trim() !== "") {
+                            const opt = document.createElement('option');
+                            opt.value = dhikr.trim();
+                            opt.textContent = dhikr.trim();
+                            selectElement.appendChild(opt);
+                        }
+                    });
+                    
+                    // إعادة دمج الأذكار الأساسية الثابتة
+                    currentOptions.forEach(opt => {
+                        if(opt.value !== "" && opt.value !== "custom") {
+                            selectElement.appendChild(opt);
+                        }
+                    });
+                    
+                    // الحقل المخصص للكتابة الحرة دائماً في الآخر
+                    const customOpt = document.createElement('option');
+                    customOpt.value = "custom";
+                    customOpt.textContent = "✍️ كتابة ذكر آخر غير موجود بالقائمة...";
+                    selectElement.appendChild(customOpt);
+                } else {
+                    selectElement.options[0].textContent = "اضغط هنا واشحن قلبك بذكر الله... ✨";
+                }
+            })
+            .catch(err => {
+                console.log("تم الاعتماد على الأذكار الافتراضية:", err);
+                selectElement.options[0].textContent = "اضغط هنا واشحن قلبك بذكر الله... ✨";
+            });
+        });
+
+        function toggleCustomDhikrField() {
+            const selectElement = document.getElementById('selectedDhikr');
+            const customGroup = document.getElementById('customDhikrGroup');
+            const customInput = document.getElementById('customDhikr');
+
+            if (selectElement.value === 'custom') {
+                customGroup.className = 'input-group show-group';
+                customInput.required = true;
+            } else {
+                customGroup.className = 'input-group hidden-group';
+                customInput.required = false;
+                customInput.value = '';
+            }
+        }
+
+        document.getElementById('dhikrForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const name = document.getElementById('studentName').value.trim();
+            const selectValue = document.getElementById('selectedDhikr').value;
+            
+            let finalDhikr = selectValue;
+            if (selectValue === 'custom') {
+                finalDhikr = document.getElementById('customDhikr').value.trim();
+            }
+            
+            const now = new Date();
+            const currentDateTime = now.getFullYear() + '/' + (now.getMonth() + 1) + '/' + now.getDate() + ' ' + now.getHours() + ':' + now.getMinutes() + ':' + now.getSeconds();
+
+            if(name && finalDhikr) {
+                if (!participants.includes(name)) {
+                    participants.push(name);
+                    updateLeaderboard();
+                }
+
+                sendToGoogleSheet(name, finalDhikr, currentDateTime);
+
+                document.getElementById('studentName').value = '';
+                document.getElementById('selectedDhikr').selectedIndex = 0;
+                toggleCustomDhikrField();
+                
+                alert(`تقبل الله منك يا بطل/ بطلة! تم تسجيل ذكرك بنجاح، واسمك يزين لوحة الأبطال الآن ليفخر بك الجميع 🎉`);
+            }
+        });
+
+        function updateLeaderboard() {
+            const podium = document.getElementById('leaderboardPodium');
+            podium.innerHTML = ''; 
+
+            participants.forEach((name, index) => {
+                let rankClass = '';
+                let titleText = '';
+
+                if (index === 0) {
+                    rankClass = 'rank-1';
+                    titleText = '🥇 بطل الورد';
+                } else if (index === 1) {
+                    rankClass = 'rank-2';
+                    titleText = '🥈 ممتاز';
+                } else if (index === 2) {
+                    rankClass = 'rank-3';
+                    titleText = '🥉 بطل';
+                } else {
+                    rankClass = 'rank-other';
+                    titleText = 'جيد في انتظاركم في المقدمة';
+                }
+
+                const card = document.createElement('div');
+                card.className = `rank-card ${rankClass}`;
+                card.innerHTML = `
+                    <span>👤 ${name}</span>
+                    <span class="badge">${titleText}</span>
+                `;
+                podium.appendChild(card);
+            });
+        }
+
+        function sendToGoogleSheet(name, dhikr, datetime) {
+            fetch(GOOGLE_SCRIPT_URL, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'text/plain'
+                },
+                body: JSON.stringify({ name: name, dhikr: dhikr, timestamp: datetime })
+            })
+            .then(res => console.log("تم تحديث الشيت بنجاح!"))
+            .catch(err => console.error("خطأ في الإرسال:", err));
+        }
+    </script>
+</body>
+</html>
